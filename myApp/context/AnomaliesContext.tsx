@@ -4,12 +4,18 @@ export type AnomalyItem = {
   id: string;
   title: string;
   description: string;
+  image: string;
   shared: boolean;
 };
 
 type AnomaliesContextType = {
   myAnomalies: AnomalyItem[];
-  addAnomaly: (title: string, description: string, shared: boolean) => void;
+  addAnomaly: (
+    title: string,
+    description: string,
+    image: string,
+    shared: boolean
+  ) => void;
 };
 
 const AnomaliesContext = createContext<AnomaliesContextType | undefined>(
@@ -19,11 +25,17 @@ const AnomaliesContext = createContext<AnomaliesContextType | undefined>(
 export function AnomaliesProvider({ children }: { children: ReactNode }) {
   const [myAnomalies, setMyAnomalies] = useState<AnomalyItem[]>([]);
 
-  const addAnomaly = (title: string, description: string, shared: boolean) => {
+  const addAnomaly = (
+    title: string,
+    description: string,
+    image: string,
+    shared: boolean
+  ) => {
     const newAnomaly: AnomalyItem = {
       id: Date.now().toString(),
       title,
       description,
+      image,
       shared,
     };
 
