@@ -40,9 +40,15 @@ export default function SearchScreen() {
       }
 
       const data = await res.json();
-
       const normalized = Array.isArray(data) ? data : [data];
-      setResults(normalized);
+
+      const imageOnly = normalized.filter(
+        (item: ApodItem) => item.media_type === "image"
+      );
+
+      const sorted = imageOnly.sort((a, b) => b.date.localeCompare(a.date));
+
+      setResults(sorted);
     } catch (error) {
       Alert.alert("Error", "Could not load APOD data");
       console.log(error);
@@ -50,6 +56,20 @@ export default function SearchScreen() {
       setLoading(false);
     }
   };
+
+  const renderItem = ({ item }: { item: ApodItem }) => (
+    <View style={styles.card}>
+      <Image source={{ uri: item.url }} style={styles.cardImage} resizeMode="cover" />
+
+      <View style={styles.cardContent}>
+        <Text style={styles.cardDate}>{item.date}</Text>
+        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardDescription} numberOfLines={2}>
+          {item.explanation}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,13 +109,15 @@ export default function SearchScreen() {
       <FlatList
         data={results}
         keyExtractor={(item) => item.date}
-        renderItem={({ item }) => (
-          <View style={styles.debugCard}>
-            <Text style={styles.debugDate}>{item.date}</Text>
-            <Text style={styles.debugTitle}>{item.title}</Text>
-          </View>
-        )}
+        renderItem={renderItem}
         contentContainerStyle={{ paddingTop: 16, paddingBottom: 20 }}
+        ListEmptyComponent={
+          !loading ? (
+            <Text style={styles.emptyText}>
+              No results yet. Choose a date range and press Search.
+            </Text>
+          ) : null
+        }
       />
     </SafeAreaView>
   );
@@ -156,22 +178,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
-  debugCard: {
+  card: {
     backgroundColor: "#0d2438",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
+    borderRadius: 14,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: "#1e3d57",
+    overflow: "hidden",
   },
-  debugDate: {
+  cardImage: {
+    width: "100%",
+    height: 150,
+    backgroundColor: "#10283d",
+  },
+  cardContent: {
+    padding: 14,
+  },
+  cardDate: {
     color: "#8fa6bb",
     fontSize: 12,
     marginBottom: 6,
   },
-  debugTitle: {
+  cardTitle: {
     color: "#ffffff",
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "700",
+    marginBottom: 8,
+  },
+  cardDescription: {
+    color: "#b8c7d6",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  emptyText: {
+    color: "#8fa6bb",
+    textAlign: "center",
+    marginTop: 30,
+    fontSize: 15,
   },
 });
