@@ -13,7 +13,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useAnomalies } from "../context/AnomaliesContext";
 
 export default function ModalScreen() {
-  const { id, title, description, image, shared, from, date, author } =
+  const { id, title, description, image, from, date, author } =
     useLocalSearchParams();
 
   const { addAnomaly, deleteAnomaly, myAnomalies } = useAnomalies();
@@ -45,11 +45,6 @@ export default function ModalScreen() {
       : typeof image === "string"
       ? image
       : "";
-
-  const finalShared =
-    fromMyAnomalies && selectedAnomaly
-      ? selectedAnomaly.shared
-      : shared === "true";
 
   const handleSave = () => {
     if (!finalTitle || !finalDescription || !finalImage) {
@@ -106,12 +101,6 @@ export default function ModalScreen() {
 
           {!!author && typeof author === "string" && !fromMyAnomalies && (
             <Text style={styles.author}>© {author}</Text>
-          )}
-
-          {(!author || fromMyAnomalies) && (
-            <Text style={styles.author}>
-              {finalShared ? "Shared anomaly" : "Private anomaly"}
-            </Text>
           )}
 
           <Text style={styles.description}>{finalDescription}</Text>

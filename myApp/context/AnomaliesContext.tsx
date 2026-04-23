@@ -12,7 +12,6 @@ export type AnomalyItem = {
   title: string;
   description: string;
   image: string;
-  shared: boolean;
 };
 
 type AnomaliesContextType = {
@@ -20,8 +19,7 @@ type AnomaliesContextType = {
   addAnomaly: (
     title: string,
     description: string,
-    image: string,
-    shared: boolean
+    image: string
   ) => void;
   deleteAnomaly: (id: string) => void;
 };
@@ -70,15 +68,13 @@ export function AnomaliesProvider({ children }: { children: ReactNode }) {
   const addAnomaly = (
     title: string,
     description: string,
-    image: string,
-    shared: boolean
+    image: string
   ) => {
     const newAnomaly: AnomalyItem = {
       id: Date.now().toString(),
       title,
       description,
       image,
-      shared,
     };
 
     setMyAnomalies((prev) => [newAnomaly, ...prev]);
