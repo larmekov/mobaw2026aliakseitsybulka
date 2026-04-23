@@ -13,32 +13,63 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useAnomalies } from "../context/AnomaliesContext";
 
 export default function ModalScreen() {
-  const { title, description, image, shared, from, date, author } =
+  const { id, title, description, image, shared, from, date, author } =
     useLocalSearchParams();
 
-  const { addAnomaly } = useAnomalies();
+  const { addAnomaly, myAnomalies } = useAnomalies();
 
   const fromMyAnomalies = from === "my-anomalies";
 
+  const selectedAnomaly =
+    fromMyAnomalies && typeof id === "string"
+      ? myAnomalies.find((item) => item.id === id)
+      : null;
+
+  const finalTitle =
+    fromMyAnomalies && selectedAnomaly
+      ? selectedAnomaly.title
+      : typeof title === "string"
+      ? title
+      : "";
+
+  const finalDescription =
+    fromMyAnomalies && selectedAnomaly
+      ? selectedAnomaly.description
+      : typeof description === "string"
+      ? description
+      : "";
+
+  const finalImage =
+    fromMyAnomalies && selectedAnomaly
+      ? selectedAnomaly.image
+      : typeof image === "string"
+      ? image
+      : "";
+
+  const finalShared =
+    fromMyAnomalies && selectedAnomaly
+      ? selectedAnomaly.shared
+      : shared === "true";
+
   const handleSave = () => {
-    if (
-      typeof title !== "string" ||
-      typeof description !== "string" ||
-      typeof image !== "string"
-    ) {
+    if (!finalTitle || !finalDescription || !finalImage) {
       Alert.alert("Error", "Could not save anomaly");
       return;
     }
 
-    addAnomaly(title, description, image, false);
-    Alert.alert("Saved", `"${title}" was added to My Anomalies`);
+    addAnomaly(finalTitle, finalDescription, finalImage, false);
+    Alert.alert("Saved", `"${finalTitle}" was added to My Anomalies`);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerDate}>
-          {typeof date === "string" && date ? date : "Saved anomaly"}
+          {typeof date === "string" && date
+            ? date
+            : fromMyAnomalies
+            ? "Saved anomaly"
+            : ""}
         </Text>
 
         <Pressable style={styles.closeButton} onPress={() => router.back()}>
@@ -47,24 +78,24 @@ export default function ModalScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {typeof image === "string" && !!image && (
-          <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
+        {!!finalImage && (
+          <Image source={{ uri: finalImage }} style={styles.image} resizeMode="cover" />
         )}
 
         <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{finalTitle}</Text>
 
-          {!!author && typeof author === "string" && (
+          {!!author && typeof author === "string" && !fromMyAnomalies && (
             <Text style={styles.author}>© {author}</Text>
           )}
 
-          {!author && (
+          {(!author || fromMyAnomalies) && (
             <Text style={styles.author}>
-              {shared === "true" ? "Shared anomaly" : "Private anomaly"}
+              {finalShared ? "Shared anomaly" : "Private anomaly"}
             </Text>
           )}
 
-          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.description}>{finalDescription}</Text>
         </View>
       </ScrollView>
 

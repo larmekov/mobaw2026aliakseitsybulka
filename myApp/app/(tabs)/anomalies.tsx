@@ -31,10 +31,7 @@ export default function MyAnomaliesScreen() {
                 router.push({
                   pathname: "/modal",
                   params: {
-                    title: item.title,
-                    description: item.description,
-                    image: item.image,
-                    shared: item.shared ? "true" : "false",
+                    id: item.id,
                     from: "my-anomalies",
                   },
                 })
