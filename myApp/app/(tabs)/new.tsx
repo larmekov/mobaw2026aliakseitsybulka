@@ -8,10 +8,36 @@ import {
   Pressable,
   View,
 } from "react-native";
+import { useAnomalies } from "../../context/AnomaliesContext";
 
 export default function NewScreen() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const { addAnomaly } = useAnomalies();
+
+  const handleSaveToMine = () => {
+    if (!title.trim() || !description.trim()) {
+      Alert.alert("Missing data", "Please enter a title and description");
+      return;
+    }
+
+    addAnomaly(title.trim(), description.trim(), false);
+    Alert.alert("Saved", `Saved "${title}" to My Anomalies`);
+    setTitle("");
+    setDescription("");
+  };
+
+  const handleSaveAndShare = () => {
+    if (!title.trim() || !description.trim()) {
+      Alert.alert("Missing data", "Please enter a title and description");
+      return;
+    }
+
+    addAnomaly(title.trim(), description.trim(), true);
+    Alert.alert("Shared", `Saved and shared "${title}"`);
+    setTitle("");
+    setDescription("");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,16 +64,13 @@ export default function NewScreen() {
           textAlignVertical="top"
         />
 
-        <Pressable
-          style={styles.button}
-          onPress={() => Alert.alert("TODO", "Save to My Anomalies not implemented yet")}
-        >
+        <Pressable style={styles.button} onPress={handleSaveToMine}>
           <Text style={styles.buttonText}>Save to My Anomalies</Text>
         </Pressable>
 
         <Pressable
           style={[styles.button, styles.shareButton]}
-          onPress={() => Alert.alert("TODO", "Save and Share not implemented yet")}
+          onPress={handleSaveAndShare}
         >
           <Text style={styles.buttonText}>Save and Share</Text>
         </Pressable>
