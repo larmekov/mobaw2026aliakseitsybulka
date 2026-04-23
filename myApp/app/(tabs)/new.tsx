@@ -41,27 +41,17 @@ export default function NewScreen() {
     }
   };
 
-  const handleSaveToMine = () => {
+  const handleSave = () => {
     if (!title.trim() || !description.trim() || !image.trim()) {
-      Alert.alert("Missing data", "Please enter title, description and choose an image");
+      Alert.alert(
+        "Missing data",
+        "Please enter title, description and choose an image"
+      );
       return;
     }
 
     addAnomaly(title.trim(), description.trim(), image.trim(), false);
     Alert.alert("Saved", `Saved "${title}" to My Anomalies`);
-    setTitle("");
-    setDescription("");
-    setImage("");
-  };
-
-  const handleSaveAndShare = () => {
-    if (!title.trim() || !description.trim() || !image.trim()) {
-      Alert.alert("Missing data", "Please enter title, description and choose an image");
-      return;
-    }
-
-    addAnomaly(title.trim(), description.trim(), image.trim(), true);
-    Alert.alert("Shared", `Saved and shared "${title}"`);
     setTitle("");
     setDescription("");
     setImage("");
@@ -101,18 +91,15 @@ export default function NewScreen() {
           </Pressable>
 
           {!!image && (
-            <Image source={{ uri: image }} style={styles.preview} resizeMode="cover" />
+            <Image
+              source={{ uri: image }}
+              style={styles.preview}
+              resizeMode="cover"
+            />
           )}
 
-          <Pressable style={styles.button} onPress={handleSaveToMine}>
+          <Pressable style={styles.button} onPress={handleSave}>
             <Text style={styles.buttonText}>Save to My Anomalies</Text>
-          </Pressable>
-
-          <Pressable
-            style={[styles.button, styles.shareButton]}
-            onPress={handleSaveAndShare}
-          >
-            <Text style={styles.buttonText}>Save and Share</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -186,16 +173,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#10283d",
   },
   button: {
-    backgroundColor: "#16344d",
+    backgroundColor: "#f59e0b",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#2a4e6d",
-  },
-  shareButton: {
-    backgroundColor: "#f59e0b",
     borderColor: "#f59e0b",
   },
   buttonText: {

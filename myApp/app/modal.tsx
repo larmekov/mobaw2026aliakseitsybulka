@@ -16,7 +16,7 @@ export default function ModalScreen() {
   const { id, title, description, image, shared, from, date, author } =
     useLocalSearchParams();
 
-  const { addAnomaly, myAnomalies } = useAnomalies();
+  const { addAnomaly, deleteAnomaly, myAnomalies } = useAnomalies();
 
   const fromMyAnomalies = from === "my-anomalies";
 
@@ -61,6 +61,25 @@ export default function ModalScreen() {
     Alert.alert("Saved", `"${finalTitle}" was added to My Anomalies`);
   };
 
+  const handleDelete = () => {
+    if (typeof id !== "string") {
+      Alert.alert("Error", "Could not delete anomaly");
+      return;
+    }
+
+    Alert.alert("Delete anomaly", `Delete "${finalTitle}"?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          deleteAnomaly(id);
+          router.back();
+        },
+      },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -103,6 +122,14 @@ export default function ModalScreen() {
         <View style={styles.footer}>
           <Pressable style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save to My Anomalies</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {fromMyAnomalies && (
+        <View style={styles.footer}>
+          <Pressable style={styles.deleteButton} onPress={handleDelete}>
+            <Text style={styles.saveButtonText}>Delete Anomaly</Text>
           </Pressable>
         </View>
       )}
@@ -177,6 +204,12 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: "#f58220",
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+  deleteButton: {
+    backgroundColor: "#c2410c",
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: "center",
