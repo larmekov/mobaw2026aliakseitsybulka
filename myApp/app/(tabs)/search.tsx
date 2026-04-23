@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { router } from "expo-router";
 
 type ApodItem = {
   date: string;
@@ -17,6 +18,7 @@ type ApodItem = {
   explanation: string;
   url: string;
   media_type: string;
+  copyright?: string;
 };
 
 const API_KEY = "BdY29fR1DkQHxQeeDSlQu5hFJjiBl47wnaLeL7pJ";
@@ -58,7 +60,22 @@ export default function SearchScreen() {
   };
 
   const renderItem = ({ item }: { item: ApodItem }) => (
-    <View style={styles.card}>
+    <Pressable
+      style={styles.card}
+      onPress={() =>
+        router.push({
+          pathname: "/modal",
+          params: {
+            title: item.title,
+            description: item.explanation,
+            image: item.url,
+            date: item.date,
+            author: item.copyright ?? "",
+            from: "search",
+          },
+        })
+      }
+    >
       <Image source={{ uri: item.url }} style={styles.cardImage} resizeMode="cover" />
 
       <View style={styles.cardContent}>
@@ -68,7 +85,7 @@ export default function SearchScreen() {
           {item.explanation}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (

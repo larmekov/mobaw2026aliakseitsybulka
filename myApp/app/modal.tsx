@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   Image,
   Pressable,
   SafeAreaView,
@@ -9,12 +10,29 @@ import {
   View,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { useAnomalies } from "../context/AnomaliesContext";
 
 export default function ModalScreen() {
   const { title, description, image, shared, from, date, author } =
     useLocalSearchParams();
 
+  const { addAnomaly } = useAnomalies();
+
   const fromMyAnomalies = from === "my-anomalies";
+
+  const handleSave = () => {
+    if (
+      typeof title !== "string" ||
+      typeof description !== "string" ||
+      typeof image !== "string"
+    ) {
+      Alert.alert("Error", "Could not save anomaly");
+      return;
+    }
+
+    addAnomaly(title, description, image, false);
+    Alert.alert("Saved", `"${title}" was added to My Anomalies`);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,7 +55,7 @@ export default function ModalScreen() {
           <Text style={styles.title}>{title}</Text>
 
           {!!author && typeof author === "string" && (
-            <Text style={styles.author}>{author}</Text>
+            <Text style={styles.author}>© {author}</Text>
           )}
 
           {!author && (
@@ -52,7 +70,7 @@ export default function ModalScreen() {
 
       {!fromMyAnomalies && (
         <View style={styles.footer}>
-          <Pressable style={styles.saveButton}>
+          <Pressable style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save to My Anomalies</Text>
           </Pressable>
         </View>
